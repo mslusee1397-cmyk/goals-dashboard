@@ -1,0 +1,55 @@
+{
+  "name": "goals-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "description": "Личный трекер целей, привычек, расписания и финансов",
+  "author": "Lucy Sky",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "start": "node server.js",
+    "app": "npm run build && electron electron/main.cjs",
+    "dist:mac": "npm run build && electron-builder --mac dmg"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "express": "^4.22.2",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vite": "^6.3.5"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "electron": "^32.2.8",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "ru.lucysky.focuspoint",
+    "productName": "Мой трекер",
+    "directories": {
+      "output": "release"
+    },
+    "artifactName": "Focus-Point-${version}.${ext}",
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "dmg": {
+      "title": "Мой трекер"
+    }
+  }
+}

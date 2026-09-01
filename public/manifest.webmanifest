@@ -1,0 +1,9 @@
+{
+  "name": "Мой трекер",
+  "short_name": "Мой трекер",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafbf9",
+  "theme_color": "#2563eb",
+  "description": "Цели, привычки, расписание и финансы"
+}
