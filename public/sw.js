@@ -1,9 +1,16 @@
-const CACHE = 'focus-point-v1'
+// Service worker disabled for the web build.
+// Keep this file as a self-removing worker so browsers that installed the old
+// cached version will unregister it and delete the old cache automatically.
 
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.add('/')))
+self.addEventListener('install', () => {
+  self.skipWaiting()
 })
 
-self.addEventListener('fetch', event => {
-  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)))
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    Promise.all([
+      caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))),
+      self.registration.unregister()
+    ]).then(() => self.clients.claim())
+  )
 })
