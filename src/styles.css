@@ -27,3 +27,9 @@ main { min-height: 100vh; background: #fafbf9; }
 .content { padding-top: 38px !important; }
 .schedule-card { grid-row: 1 !important; }
 .card { border-radius: 9px !important; box-shadow: 0 3px 14px #293b600b !important; }
+
+.habit-month-control { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; padding:10px 12px; border:1px solid #e8edf5; border-radius:14px; background:#fafcff; }
+.habit-month-control label { display:flex; align-items:center; gap:8px; font-size:11px; color:#64748b; font-weight:700; }
+.habit-month-control input { border:1px solid #dbe3ef; border-radius:9px; padding:6px 8px; background:#fff; color:#334155; font:inherit; }
+.habit-month-control small { color:#94a3b8; font-size:10px; }
+@media (max-width: 640px) { .habit-month-control { align-items:flex-start; flex-direction:column; } }
