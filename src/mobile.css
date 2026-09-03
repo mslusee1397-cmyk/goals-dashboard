@@ -1,0 +1,67 @@
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  body { overflow-x: hidden; }
+  .topbar { height: auto; min-height: 64px; padding: 12px 16px; gap: 10px; align-items: center; }
+  .brand { min-width: 0; }
+  .brand strong { font-size: 13px; }
+  .brand span, .today-label { display: none; }
+  .top-actions { gap: 6px; flex-wrap: nowrap; }
+  .profile { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .icon-button { width: 32px; height: 32px; flex: 0 0 32px; }
+
+  .content { padding: 24px 12px 20px; }
+  .welcome { align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+  .welcome h1 { font-size: 27px; line-height: 1.08; }
+  .welcome p { font-size: 12px; line-height: 1.45; }
+  .daily-score { flex: 0 0 auto; flex-direction: column; gap: 4px; }
+  .score-ring { width: 54px; height: 54px; }
+  .score-ring span { font-size: 15px; }
+
+  .stats { grid-template-columns: 1fr; max-width: none; gap: 8px; margin-bottom: 12px; }
+  .stat { padding: 12px; }
+  .stat strong { font-size: 17px; }
+
+  .dashboard-grid { grid-template-columns: 1fr; gap: 12px; }
+  .schedule-card { grid-column: auto; }
+  .card { padding: 15px; border-radius: 13px; }
+  .card-head { margin-bottom: 16px; }
+  .card-head h2 { font-size: 16px; }
+
+  .habit-month-control { display: flex; flex-direction: column; gap: 8px; }
+  .habits-overview { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .habit-cards { display: flex; flex-direction: column; gap: 10px; }
+  .habit-item-card { padding: 12px; }
+  .habit-days-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+  .habit-day-button { min-height: 36px; }
+
+  .week-controls { align-items: flex-start; flex-direction: column; gap: 7px; }
+  .schedule-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .schedule-table { min-width: 760px; }
+  .schedule-slot textarea { min-height: 58px; }
+
+  .finance-toolbar { align-items: stretch; flex-direction: column; gap: 10px; }
+  .money-summary { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .money-card { padding: 12px; }
+  .finance-action-buttons { grid-template-columns: 1fr; gap: 8px; }
+  .finance-lower { grid-template-columns: 1fr; gap: 12px; }
+  .transaction-modal { width: calc(100vw - 24px); max-height: 90vh; overflow-y: auto; }
+
+  .sliders { grid-template-columns: 1fr; gap: 14px; }
+  .journal-fields { grid-template-columns: 1fr; }
+  .journal-fields .wide { grid-column: auto; }
+  .settings-grid { grid-template-columns: 1fr; gap: 14px; }
+  .settings-panel { margin-left: 12px; margin-right: 12px; padding: 14px; }
+  .settings-head { flex-direction: column; }
+  footer { gap: 8px; align-items: flex-start; flex-direction: column; }
+}
+
+@media (max-width: 420px) {
+  .content { padding-left: 9px; padding-right: 9px; }
+  .topbar { padding-left: 10px; padding-right: 10px; }
+  .profile { display: none; }
+  .top-actions { margin-left: auto; }
+  .welcome h1 { font-size: 24px; }
+  .card { padding: 12px; }
+  .card-head h2 { font-size: 15px; }
+  .habit-day-button { min-height: 32px; font-size: 10px; }
+}
