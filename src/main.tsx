@@ -5,6 +5,22 @@ import { AuthProvider } from './AuthContext'
 import './styles.css'
 import './mobile.css'
 
+// Clean up service workers and caches left by older versions of the app.
+// This prevents a previously cached bundle from keeping the production site blank.
+if (typeof window !== 'undefined') {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => registration.unregister())
+    }).catch(() => {})
+  }
+
+  if ('caches' in window) {
+    caches.keys().then((keys) => {
+      keys.forEach((key) => caches.delete(key))
+    }).catch(() => {})
+  }
+}
+
 class AppErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   state: { error: Error | null } = { error: null }
 
@@ -49,6 +65,3 @@ if (root) {
     </StrictMode>
   )
 }
-
-// Service worker is intentionally disabled for the web build.
-// It could cache an old index.html/JS bundle and cause a blank screen after deploys.
