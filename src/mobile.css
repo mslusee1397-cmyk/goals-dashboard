@@ -1,5 +1,7 @@
-/* Мобильная адаптация */
+/* Mobile interface */
 @media (max-width: 768px) {
+  html, body, #root { min-height: 100%; }
+  html { -webkit-text-size-adjust: 100%; }
   body { overflow-x: hidden; }
   .topbar { height: auto; min-height: 64px; padding: 12px 16px; gap: 10px; align-items: center; }
   .brand { min-width: 0; }
@@ -9,7 +11,7 @@
   .profile { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .icon-button { width: 32px; height: 32px; flex: 0 0 32px; }
 
-  .content { padding: 24px 12px 20px; }
+  .content { padding: 24px 12px calc(24px + env(safe-area-inset-bottom)); }
   .welcome { align-items: flex-start; gap: 14px; margin-bottom: 20px; }
   .welcome h1 { font-size: 27px; line-height: 1.08; }
   .welcome p { font-size: 12px; line-height: 1.45; }
@@ -26,6 +28,7 @@
   .card { padding: 15px; border-radius: 13px; }
   .card-head { margin-bottom: 16px; }
   .card-head h2 { font-size: 16px; }
+  button, input, textarea, select { font-size: 16px; }
 
   .habit-month-control { display: flex; flex-direction: column; gap: 8px; }
   .habits-overview { grid-template-columns: repeat(2, 1fr); gap: 8px; }
