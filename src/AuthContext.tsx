@@ -82,6 +82,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return resetPassword(user.username, newPassword)
   }
 
+  useEffect(() => {
+    if (!user) return
+    const addSecurityAction = () => {
+      const panel = document.querySelector<HTMLElement>('.settings-panel')
+      if (!panel || panel.querySelector('.account-password-setting')) return
+      const box = document.createElement('div')
+      box.className = 'account-password-setting'
+      box.style.cssText = 'margin-top:20px;padding:18px;border:1px solid #e7ebf2;border-radius:14px;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap'
+      box.innerHTML = '<div><h3 style="margin:0 0 5px;font-size:16px">Безопасность аккаунта</h3><span style="color:#8995a7;font-size:13px">Изменить пароль пользователя @' + user.username + '</span></div><button type="button" class="account-password-button" style="border:0;border-radius:9px;padding:10px 15px;background:#2563eb;color:#fff;font-weight:600;cursor:pointer">Изменить пароль</button>'
+      const button = box.querySelector<HTMLButtonElement>('.account-password-button')
+      button?.addEventListener('click', () => {
+        const next = window.prompt('Введите новый пароль (минимум 4 символа)')
+        if (next === null) return
+        if (next.length < 4) {
+          window.alert('Пароль должен быть минимум 4 символа')
+          return
+        }
+        if (changePassword(next)) window.alert('Пароль успешно изменён')
+      })
+      panel.appendChild(box)
+    }
+    const observer = new MutationObserver(addSecurityAction)
+    observer.observe(document.body, { childList: true, subtree: true })
+    addSecurityAction()
+    return () => observer.disconnect()
+  }, [user])
+
   const logout = () => {
     setUser(null)
     localStorage.removeItem('focus-point-user')
