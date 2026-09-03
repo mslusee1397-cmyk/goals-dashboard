@@ -20,10 +20,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (username: string, password: string): boolean => {
     try {
       const users = JSON.parse(localStorage.getItem('focus-point-users') || '{}') as Record<string, User>
-      const user = Object.values(users).find(u => u.username === username)
-      if (!user || user.password !== password) return false
-      setUser(user)
-      localStorage.setItem('focus-point-user', JSON.stringify(user))
+      const foundUser = Object.values(users).find(u => u.username === username)
+      if (!foundUser || foundUser.password !== password) return false
+      setUser(foundUser)
+      localStorage.setItem('focus-point-user', JSON.stringify(foundUser))
       return true
     } catch (error) {
       console.error('Login error:', error)
@@ -36,13 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!username || !password || password.length < 4) return false
       const users = JSON.parse(localStorage.getItem('focus-point-users') || '{}') as Record<string, User>
       if (Object.values(users).some(u => u.username === username)) return false
-
-      const newUser: User = {
-        id: Date.now().toString(),
-        username,
-        password,
-        createdAt: Date.now()
-      }
+      const newUser: User = { id: Date.now().toString(), username, password, createdAt: Date.now() }
       users[newUser.id] = newUser
       localStorage.setItem('focus-point-users', JSON.stringify(users))
       setUser(newUser)
@@ -60,19 +54,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const users = JSON.parse(localStorage.getItem('focus-point-users') || '{}') as Record<string, User>
       const entry = Object.entries(users).find(([, value]) => value.username === username)
       if (!entry) return false
-
-      const [id, user] = entry
-      const updatedUser = { ...user, password: newPassword }
+      const [id, storedUser] = entry
+      const updatedUser = { ...storedUser, password: newPassword }
       users[id] = updatedUser
       localStorage.setItem('focus-point-users', JSON.stringify(users))
-
-      const currentUser = localStorage.getItem('focus-point-user')
-      if (currentUser) {
+      const current = localStorage.getItem('focus-point-user')
+      if (current) {
         try {
-          const parsedCurrent = JSON.parse(currentUser) as User
-          if (parsedCurrent.id === id) localStorage.setItem('focus-point-user', JSON.stringify(updatedUser))
+          const parsed = JSON.parse(current) as User
+          if (parsed.id === id) {
+            setUser(updatedUser)
+            localStorage.setItem('focus-point-user', JSON.stringify(updatedUser))
+          }
         } catch {
-          // Ignore an invalid saved session; the password reset itself succeeded.
+          // Ignore an invalid saved session.
         }
       }
       return true
@@ -82,13 +77,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const changePassword = (newPassword: string): boolean => {
+    if (!user) return false
+    return resetPassword(user.username, newPassword)
+  }
+
   const logout = () => {
     setUser(null)
     localStorage.removeItem('focus-point-user')
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, resetPassword, logout }}>
+    <AuthContext.Provider value={{ user, login, register, resetPassword, changePassword, logout }}>
       {isInitialized && children}
     </AuthContext.Provider>
   )
