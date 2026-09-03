@@ -2,44 +2,36 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#f7f8fc" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <title>Мой трекер - Personal Goal Tracker</title>
-    <style>
-      html, body { margin: 0; min-height: 100%; }
-      #boot-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f7f8fc; color: #1f2937; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-      #boot-screen-inner { text-align: center; padding: 24px; }
-      #boot-screen strong { display: block; font-size: 20px; }
-      #boot-screen span { display: block; margin-top: 8px; color: #6b7280; font-size: 14px; }
-      #boot-error { display: none; margin-top: 16px; max-width: 520px; color: #b91c1c; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
-    </style>
+    <meta name="description" content="Личный трекер целей, привычек, расписания и финансов" />
+    <title>Мой трекер</title>
   </head>
   <body>
     <div id="root">
-      <div id="boot-screen" role="status" aria-live="polite">
-        <div id="boot-screen-inner">
-          <strong>Мой трекер</strong>
-          <span>Загрузка приложения…</span>
-          <div id="boot-error"></div>
+      <div id="boot-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f9fc;color:#17243a;font-family:system-ui,-apple-system,sans-serif">
+        <div style="text-align:center;padding:24px">
+          <div style="font-size:22px;font-weight:700">Мой трекер</div>
+          <div style="margin-top:8px;color:#8995a7;font-size:14px">Загрузка приложения…</div>
+          <div id="boot-error" style="display:none;margin-top:14px;color:#b91c1c;font-size:13px;max-width:600px;overflow-wrap:anywhere"></div>
         </div>
       </div>
     </div>
     <script>
-      window.addEventListener('error', function (event) {
+      function showBootError(message) {
         var box = document.getElementById('boot-error');
         if (!box) return;
-        box.textContent = 'Не удалось загрузить приложение. ' + (event.message || 'Проверьте подключение и обновите страницу.');
+        box.textContent = 'Ошибка запуска: ' + message;
         box.style.display = 'block';
+      }
+      window.addEventListener('error', function (event) {
+        showBootError(event.message || 'Неизвестная ошибка JavaScript');
       });
       window.addEventListener('unhandledrejection', function (event) {
-        var box = document.getElementById('boot-error');
-        if (!box) return;
         var reason = event.reason && event.reason.message ? event.reason.message : String(event.reason || 'Неизвестная ошибка');
-        box.textContent = 'Ошибка запуска: ' + reason;
-        box.style.display = 'block';
+        showBootError(reason);
       });
     </script>
     <script type="module" src="/src/main.tsx"></script>
