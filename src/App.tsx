@@ -176,7 +176,43 @@ function Dashboard({ user, logout }: { user: { id: string; username: string }; l
     <div className="content"><div className="welcome"><div><span className="eyebrow">{new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })}</span><h1>Держи курс, <em>{user.username}.</em></h1><p>Маленькие шаги складываются в большие изменения. {topStreak?.best ? `Лучшая серия: ${topStreak.name} — ${topStreak.best} дн. 🔥` : 'Начни сегодня и создай свою первую серию! 🔥'}</p></div><div className="daily-score"><div className="score-ring"><span>{Math.round((goalPercent + weeklyHabitPercent) / 2)}<small>%</small></span></div><span>фокус дня</span></div></div>
       <div className="stats"><Stat icon={<Target />} label="Цели" value={`${goalPercent}%`} detail="средний прогресс" color="blue" /><Stat icon={<Flame />} label="Привычки" value={`${Math.round(habitDone / Math.max(habitTotal, 1) * 100)}%`} detail="выполнено за месяц" color="mint" /><Stat icon={<Activity />} label="Расписание" value={`${Math.round(schedule.flat().filter(item => item.text.trim()).length / Math.max(data.scheduleTimes.length * 7, 1) * 100)}%`} detail="заполнено в шаблоне" color="orange" /></div>
       <div className="dashboard-grid"><Card title="Цели месяца" eyebrow={`${data.goals.length} из 6 целей`} icon={<Target size={20} />} className="goals-card"><div className="total-progress"><div><strong>{goalPercent}%</strong><span>общий прогресс</span></div><div className="progress-track"><i style={{ width: `${goalPercent}%` }} /></div></div><div className="goals-list">{data.goals.map(goal => <div className="goal-row" key={goal.id}><button className={`check ${goal.done ? 'checked' : ''}`} onClick={() => update({ goals: data.goals.map(item => item.id === goal.id ? { ...item, done: !item.done } : item) })}>{goal.done && <Check size={13} />}</button><div className="goal-main"><div className="goal-title"><span>{goal.title}</span><b>{goal.done ? 100 : goal.progress}%</b></div><div className="progress-track"><i style={{ width: `${goal.done ? 100 : goal.progress}%` }} /></div></div><button className="delete-button" title="Удалить цель" onClick={() => update({ goals: data.goals.filter(item => item.id !== goal.id) })}><Trash2 size={15} /></button></div>)}</div><div className="add-inline"><input value={newGoal} onChange={e => setNewGoal(e.target.value)} onKeyDown={e => e.key === 'Enter' && addGoal()} placeholder="Добавить новую цель..." /><button onClick={addGoal} title="Добавить цель"><Plus size={17} /></button></div></Card>
-        <Card title="Привычки" eyebrow={getMonthName(habitMonth)} icon={<Flame size={20} />} className="habits-card"><div className="habit-month-control"><label><span>Месяц</span><input type="month" value={habitMonth} onChange={e => setHabitMonth(e.target.value)} /></label><small>История сохраняется для каждого месяца</small></div><div className="habit-summary"><div><strong>{Math.round(habitDone / Math.max(habitTotal, 1) * 100)}%</strong><span>выполнено за месяц</span><small>{topStreak?.best ? `🏆 ${topStreak.name}: ${topStreak.best} дн. подряд` : '🏆 Пока нет серии'}</small></div><div className="legend"><i className="dot done" /> выполнено <i className="dot today-dot" /> сегодня</div></div><div className="habit-table"><div className="habit-corner" />{Array.from({ length: habitDays }, (_, i) => <span className={`day-number ${i + 1 === today ? 'current' : ''}`} key={i}>{i + 1}</span>)}{habitNames.map((name, habitIndex) => <div className="habit-line" key={name}><span className="habit-name"><i className={`habit-dot ${habitColors[habitIndex]}`} />{name}</span>{(habitsForMonth[name] || Array(habitDays).fill(false)).map((done, day) => <button key={day} className={`habit-cell ${done ? 'filled' : ''} ${day + 1 === today ? 'current' : ''}`} onClick={() => { const next = (habitsForMonth[name] || Array(habitDays).fill(false)).map((v, i) => i === day ? !v : v); const nextMonth = { ...habitsForMonth, [name]: next }; update({ habits: habitMonth === getCurrentMonth() ? nextMonth : data.habits, habitsByMonth: { ...data.habitsByMonth, [habitMonth]: nextMonth } }) }}>{done && <Check size={11} />}</button>)}</div>)}</div></Card>
+        <Card title="Привычки" eyebrow={getMonthName(habitMonth)} icon={<Flame size={20} />} className="habits-card">
+          <div className="habit-month-control">
+            <label><span>Месяц</span><input type="month" value={habitMonth} onChange={e => setHabitMonth(e.target.value)} /></label>
+            <small>Отмечай привычки одним нажатием — история сохраняется по месяцам</small>
+          </div>
+
+          <div className="habits-overview">
+            <div className="habits-overview-main"><strong>{Math.round(habitDone / Math.max(habitTotal, 1) * 100)}%</strong><span>выполнено за месяц</span></div>
+            <div><b>{habitDone}</b><span>отметок</span></div>
+            <div><b>{topStreak?.best || 0} 🔥</b><span>лучшая серия</span></div>
+            <div><b>{habitNames.length}</b><span>привычек</span></div>
+          </div>
+
+          <div className="habit-cards">
+            {habitNames.map((name, habitIndex) => {
+              const days = habitsForMonth[name] || Array(habitDays).fill(false)
+              const doneCount = days.filter(Boolean).length
+              const currentStreak = getHabitStreak(days)
+              const bestStreak = getBestHabitStreak(days)
+              return <section className="habit-item-card" key={name}>
+                <div className="habit-item-head">
+                  <div className="habit-title-wrap"><i className={`habit-dot large ${habitColors[habitIndex]}`} /><div><h3>{name}</h3><span>{doneCount} из {habitDays} дней • сейчас {currentStreak} дн. подряд</span></div></div>
+                  <div className="habit-item-streak"><span>Лучшая серия</span><b>🔥 {bestStreak}</b></div>
+                </div>
+                <div className="habit-days-grid">
+                  {days.map((done, day) => <button key={day} className={`habit-day-button ${done ? 'filled' : ''} ${day + 1 === today ? 'today' : ''}`} onClick={() => {
+                    const next = days.map((v, i) => i === day ? !v : v)
+                    const nextMonth = { ...habitsForMonth, [name]: next }
+                    update({ habits: habitMonth === getCurrentMonth() ? nextMonth : data.habits, habitsByMonth: { ...data.habitsByMonth, [habitMonth]: nextMonth } })
+                  }} title={`${day + 1} ${getMonthName(habitMonth)}`}>
+                    <span>{day + 1}</span>{done && <Check size={12} />}
+                  </button>)}
+                </div>
+              </section>
+            })}
+          </div>
+        </Card>
         <Card title="Постоянное расписание" eyebrow="ФИКСИРОВАННЫЙ ШАБЛОН НЕДЕЛИ" icon={<Activity size={20} />} className="schedule-card"><div className="week-controls"><span>Заполняется один раз и автоматически повторяется каждую неделю</span><small>Изменения сохраняются сразу</small></div><div className="schedule-table"><div className="time-corner">Время</div>{weekdays.map((day, index) => <div className={`schedule-header ${index === currentWeekdayIndex ? 'is-today' : ''}`} key={day}><span>{day}</span>{index === currentWeekdayIndex && <b>Сегодня</b>}</div>)}{scheduleTimes.map((time, timeIndex) => <div className="schedule-row" key={time}><span className="schedule-time">{time}</span>{schedule.map((day, dayIndex) => <div className={`schedule-slot ${dayIndex === currentWeekdayIndex ? 'is-today' : ''}`} key={`${dayIndex}-${time}`}><textarea value={day[timeIndex].text} onChange={e => setSchedule(dayIndex, timeIndex, { text: e.target.value })} placeholder="Что запланировано?" /><span className="schedule-fixed-label">Повторяется еженедельно</span></div>)}</div>)}</div></Card>
         <Card title="Финансы" eyebrow="ДОХОДЫ И РАСХОДЫ" icon={<Wallet size={22} />} className="finance-card">
           <div className="finance-toolbar">
